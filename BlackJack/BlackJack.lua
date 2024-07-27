@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.1
+--- VERSION: 1.0.2
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -403,7 +403,7 @@ SMODS.Joker {
     unlock_condition = {type = 'win_no_hand', extra = 'Blackjack'},
     unlocked = false,
     calculate = function(self, card, context)
-        if SMODS.end_calculate_context(context) then
+        if context.joker_main then
             local get_blackjack = function(hand)
                 if (#hand < 3) then
                     return {}
