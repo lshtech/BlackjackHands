@@ -949,6 +949,7 @@ function Blind:debuff_hand(cards, hand, handname, check)
         end
     end
     if self.disabled then return end
+    return old_debuff(self, cards, hand, handname, check)
 end
 
 local start_runref = Game.start_run
