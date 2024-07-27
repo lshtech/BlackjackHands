@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.0
+--- VERSION: 1.0.1
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
