@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.2
+--- VERSION: 1.0.3
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -471,9 +471,9 @@ SMODS.Joker {
 
             if valid then
                 return {
-                    message = localize{type='variable',key='a_xmult',vars={self.ability.extra.xmult}},
-                    Xmult_mod = self.ability.extra.xmult,
-                    card = self
+                    message = localize{type='variable',key='a_xmult',vars={card.ability.extra.xmult}},
+                    Xmult_mod = card.ability.extra.xmult,
+                    card = card
                 }
             else 
                 return
@@ -501,12 +501,12 @@ SMODS.Joker {
     cost = 2,
     config = {extra = {odds = 7, times = 1}},
     calculate = function(self, card, context)
-        if context.repetition and (context.cardarea == G.play) and (context.scoring_hand ~= nil) and not self.debuff then
-            if (context.other_card:get_id() == 7) and (pseudorandom('jackpot') < 2*G.GAME.probabilities.normal/self.ability.extra.odds) then
+        if context.repetition and (context.cardarea == G.play) and (context.scoring_hand ~= nil) and not card.debuff then
+            if (context.other_card:get_id() == 7) and (pseudorandom('jackpot') < 2*G.GAME.probabilities.normal/card.ability.extra.odds) then
                 return {
                     message = localize('k_again_ex'),
-                    repetitions = self.ability.extra.times,
-                    card = self
+                    repetitions = card.ability.extra.times,
+                    card = card
                 }
             end
         end
