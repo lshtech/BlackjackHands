@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.3
+--- VERSION: 1.0.4
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -400,7 +400,7 @@ SMODS.Joker {
     pos = {x = 0, y = 0},
     cost = 4,
     config = {extra = {xmult = 3}},
-    unlock_condition = {type = 'win_no_hand', extra = 'Blackjack'},
+    unlock_condition = {type = 'win_no_hand', extra = 'h_bj_jack'},
     unlocked = false,
     calculate = function(self, card, context)
         if context.joker_main then
