@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.5
+--- VERSION: 1.0.6
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -228,7 +228,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_natural'},
+    config = {hand_type = 'bj_natural'},
     atlas = "planets",
     pos = {x = 0, y = 0},
     loc_vars = function(self, info_queue, card)
@@ -236,7 +236,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_natural"].played > 0 then
+        if G.GAME.hands["bj_natural"].played > 0 then
             return false
         end
         return true
@@ -255,7 +255,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_jack_three'},
+    config = {hand_type = 'bj_jack_three'},
     atlas = "planets",
     pos = {x = 1, y = 0},
     loc_vars = function(self, info_queue, card)
@@ -263,7 +263,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_jack_three"].played > 0 then
+        if G.GAME.hands["bj_jack_three"].played > 0 then
             return false
         end
         return true
@@ -282,7 +282,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_jack'},
+    config = {hand_type = 'bj_jack'},
     atlas = "planets",
     pos = {x = 2, y = 0},
     loc_vars = function(self, info_queue, card)
@@ -290,7 +290,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_jack"].played > 0 then
+        if G.GAME.hands["bj_jack"].played > 0 then
             return false
         end
         return true
@@ -309,7 +309,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_jack_flush'},
+    config = {hand_type = 'bj_jack_flush'},
     atlas = "planets",
     pos = {x = 0, y = 1},
     loc_vars = function(self, info_queue, card)
@@ -317,7 +317,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_jack_flush"].played > 0 then
+        if G.GAME.hands["bj_jack_flush"].played > 0 then
             return false
         end
         return true
@@ -336,7 +336,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_jack_house'},
+    config = {hand_type = 'bj_jack_house'},
     atlas = "planets",
     pos = {x = 1, y = 1},
     loc_vars = function(self, info_queue, card)
@@ -344,7 +344,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_jack_house"].played > 0 then
+        if G.GAME.hands["bj_jack_house"].played > 0 then
             return false
         end
         return true
@@ -363,7 +363,7 @@ SMODS.Planet {
             "{C:chips}+#4#{} chips"
         }
     },
-    config = {hand_type = 'h_bj_jack_flush_house', softlock = true},
+    config = {hand_type = 'bj_jack_flush_house', softlock = true},
     atlas = "planets",
     pos = {x = 2, y = 1},
     loc_vars = function(self, info_queue, card)
@@ -371,7 +371,7 @@ SMODS.Planet {
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
     in_pool = function(self)
-        if G.GAME.hands["h_bj_jack_flush_house"].played > 0 then
+        if G.GAME.hands["bj_jack_flush_house"].played > 0 then
             return false
         end
         return true
@@ -981,7 +981,7 @@ function Blind:debuff_hand(cards, hand, handname, check)
             end
         end
         if (not check) or front_face then
-            if handname ~= "h_bj_natural" then
+            if handname ~= "bj_natural" then
                 G.reallyNat = true
                 return true
             else
@@ -1005,9 +1005,9 @@ function Game.start_run(self, args)
 	start_runref(self, args)
     if args.challenge then
         if self.GAME.modifiers["nat_three"] then
-            G.GAME.hands['h_bj_natural'].level = math.max(0, G.GAME.hands['h_bj_natural'].level + 2)
-            G.GAME.hands['h_bj_natural'].mult = math.max(G.GAME.hands['h_bj_natural'].s_mult + G.GAME.hands['h_bj_natural'].l_mult*(G.GAME.hands['h_bj_natural'].level - 1), 1)
-            G.GAME.hands['h_bj_natural'].chips = math.max(G.GAME.hands['h_bj_natural'].s_chips + G.GAME.hands['h_bj_natural'].l_chips*(G.GAME.hands['h_bj_natural'].level - 1), 0)
+            G.GAME.hands['bj_natural'].level = math.max(0, G.GAME.hands['bj_natural'].level + 2)
+            G.GAME.hands['bj_natural'].mult = math.max(G.GAME.hands['bj_natural'].s_mult + G.GAME.hands['bj_natural'].l_mult*(G.GAME.hands['bj_natural'].level - 1), 1)
+            G.GAME.hands['bj_natural'].chips = math.max(G.GAME.hands['bj_natural'].s_chips + G.GAME.hands['bj_natural'].l_chips*(G.GAME.hands['bj_natural'].level - 1), 0)
         end
     end
 end
