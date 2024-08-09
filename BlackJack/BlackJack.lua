@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.6
+--- VERSION: 1.0.7
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -115,7 +115,7 @@ local new_hands = {
 
 new_hands[1].evaluate = function(parts, hand)
     if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) and next(parts._flush) then
-        return SMODS.merge_lists(parts._3, parts._2)
+        return {SMODS.merge_lists(parts._3, parts._2)}
     else
         return {}
     end
@@ -123,7 +123,7 @@ end
 
 new_hands[2].evaluate = function(parts, hand)
     if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) then
-        return SMODS.merge_lists(parts._3, parts._2)
+        return {SMODS.merge_lists(parts._3, parts._2)}
     else
         return {}
     end
