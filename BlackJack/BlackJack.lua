@@ -4,7 +4,7 @@
 --- PREFIX: bj
 --- MOD_AUTHOR: [mathguy]
 --- MOD_DESCRIPTION: Blackjack Hands
---- VERSION: 1.0.7
+--- VERSION: 1.0.8
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
@@ -237,9 +237,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_natural"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
@@ -264,9 +264,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_jack_three"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
@@ -291,9 +291,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_jack"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
@@ -318,9 +318,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_jack_flush"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
@@ -345,9 +345,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_jack_house"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
@@ -372,9 +372,9 @@ SMODS.Planet {
     end,
     in_pool = function(self)
         if G.GAME.hands["bj_jack_flush_house"].played > 0 then
-            return false
+            return true
         end
-        return true
+        return false
     end
 }
 
