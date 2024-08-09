@@ -8,6 +8,102 @@
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
+local get_blackjack = function(hand)
+    if (#hand < 3) then
+        return {}
+    end
+    local ret = {}
+    local t = {}
+    local total = 0
+    local aces = 0
+    local tolerance = add_bj_count()
+    for i=1, #hand do
+        if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
+            total = total + hand[i].base.nominal
+            t[#t+1] = hand[i]
+            if hand[i].base.value == 'Ace' then
+                aces = aces + 1
+            end
+        end
+    end
+    if (total > (21 + tolerance)) then
+        while ((total > (21 + tolerance)) and (aces > 0)) do 
+            total = total - 10
+            aces = aces - 1
+        end
+    end
+    if (total >= (21 - tolerance)) and (total <= (21 + tolerance)) then
+        table.insert(ret, t)
+        return ret
+    end
+    return {}
+end
+
+local get_blackjack_three = function(hand)
+    if (#hand < 3) then
+        return {}
+    end
+    local ret = {}
+    local t = {}
+    local total = 0
+    local aces = 0
+    local rank = -1
+    local tolerance = add_bj_count()
+    for i=1, #hand do
+        if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
+            if (rank == -1) then
+                rank = hand[i].base.value
+            end
+            if (hand[i].base.value ~= rank) then
+                return {}
+            end
+            total = total + hand[i].base.nominal
+            t[#t+1] = hand[i]
+            if hand[i].base.value == 'Ace' then
+                aces = aces + 1
+            end
+        end
+    end
+    if (#t ~= 3) then
+        return {}
+    end
+    if (total > (21 + tolerance)) then
+        while ((total > (21 + tolerance)) and (aces > 0)) do 
+            total = total - 10
+            aces = aces - 1
+        end
+    end
+    if (total >= (21 - tolerance)) and (total <= (21 + tolerance)) then
+        table.insert(ret, t)
+        return ret
+    end
+    return {}
+end
+
+local get_natural = function(hand) 
+    local ret = {}
+    local t = {}
+    local ace = false
+    local face = false
+    for i=1, #hand do
+        if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
+            t[#t+1] = hand[i]
+            if (hand[i].base.value == 'Ace') and (not ace) then
+                ace = true
+            elseif (hand[i].base.nominal == 10) and (not face) then
+                face = true
+            else
+                return {}
+            end
+        end
+    end
+    if ace and face then
+        table.insert(ret, t)
+        return ret
+    end
+    return {}
+end
+
 local new_hands = {
     {name = "Blackjack Flush House",  mult = 18,  chips = 180, level_mult = 3, level_chips = 40, order = 0.9, example = {{'S_3', true},{'S_5', true},{'S_5', true},{'S_5', true},{'S_3', true}}, desc = {"Three of a Kind and a Pair", "whose cards sum to 21.", "all cards sharing the same suit"}, above_hand = "Flush Five", key = "jack_flush_house", visible = false},
     {name = "Blackjack House",      mult = 8,   chips = 80, level_mult = 3, level_chips = 35, order = 1, example = {{'D_3', true},{'S_3', true},{'S_6', true},{'H_3', true},{'C_6', true}}, desc = {"Three of a Kind and a Pair", "whose cards sum to 21."}, above_hand = "Four of a Kind", key = "jack_house", visible = true},
@@ -16,6 +112,58 @@ local new_hands = {
     {name = "Natural",        mult = 1,   chips = 7,  level_mult = 1, level_chips = 14, order = 1, example = {{'H_A', true},{'S_J', true}}, desc = {"An Ace with a 10 value card."}, above_hand = "High Card", key = "natural", visible = true},
     {name = "Blackjack",        mult = 3,   chips = 35,  level_mult = 2, level_chips = 25, order = 1, example = {{'S_3', true},{'C_4', true},{'S_5', true},{'D_2', true},{'H_7', true}}, desc = {"3 or more cards whose ranks", "sum to 21."}, above_hand = "Three of a Kind", key = "jack", visible = true}
 }
+
+new_hands[1].evaluate = function(parts, hand)
+    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) and next(parts._flush) then
+        return SMODS.merge_lists(parts._3, parts._2)
+    else
+        return {}
+    end
+end
+
+new_hands[2].evaluate = function(parts, hand)
+    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) then
+        return SMODS.merge_lists(parts._3, parts._2)
+    else
+        return {}
+    end
+end
+
+new_hands[3].evaluate = function(parts, hand)
+    local bj = get_blackjack(hand)
+    if next(bj) and next(parts._flush) then
+        return bj
+    else
+        return {}
+    end
+end
+
+new_hands[4].evaluate = function(parts, hand)
+    local bj3 = get_blackjack_three(hand)
+    if next(bj3) then
+        return bj3
+    else
+        return {}
+    end
+end
+
+new_hands[5].evaluate = function(parts, hand)
+    local nat = get_natural(hand)
+    if next(nat) then
+        return nat
+    else
+        return {}
+    end
+end
+
+new_hands[6].evaluate = function(parts, hand)
+    local bj = get_blackjack(hand)
+    if next(bj) then
+        return bj
+    else
+        return {}
+    end
+end
 
 for i, j in ipairs(new_hands) do
     SMODS.PokerHand {
@@ -30,7 +178,8 @@ for i, j in ipairs(new_hands) do
         loc_txt = {
             name = j.name,
             description = j.desc
-        }
+        },
+        evaluate = j.evaluate
     }
 end
 
@@ -86,6 +235,12 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_natural"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
 
 SMODS.Planet {
@@ -107,6 +262,12 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_jack_three"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
 
 SMODS.Planet {
@@ -128,6 +289,12 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_jack"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
 
 SMODS.Planet {
@@ -149,6 +316,12 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_jack_flush"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
 
 SMODS.Planet {
@@ -170,6 +343,12 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_jack_house"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
 
 SMODS.Planet {
@@ -191,151 +370,13 @@ SMODS.Planet {
         local hand = self.config.hand_type
         return { vars = {G.GAME.hands[hand].level,localize(hand, 'poker_hands'), G.GAME.hands[hand].l_mult, G.GAME.hands[hand].l_chips, colours = {(G.GAME.hands[hand].level==1 and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[math.min(7, G.GAME.hands[hand].level)])}} }
     end,
+    in_pool = function(self)
+        if G.GAME.hands["h_bj_jack_flush_house"].played > 0 then
+            return false
+        end
+        return true
+    end
 }
-
-local evaluate_poker_hand_ref = evaluate_poker_hand
-local new_evaluate_poker_hand = function(hand)
-    local results = evaluate_poker_hand_ref(hand)
-    
-    for _, v in ipairs(new_hands) do
-        results[v.name] = {}
-    end
-
-    local get_blackjack = function(hand)
-        if (#hand < 3) then
-            return {}
-        end
-        local ret = {}
-        local t = {}
-        local total = 0
-        local aces = 0
-        local tolerance = add_bj_count()
-        for i=1, #hand do
-            if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
-                total = total + hand[i].base.nominal
-                t[#t+1] = hand[i]
-                if hand[i].base.value == 'Ace' then
-                    aces = aces + 1
-                end
-            end
-        end
-        if (total > (21 + tolerance)) then
-            while ((total > (21 + tolerance)) and (aces > 0)) do 
-                total = total - 10
-                aces = aces - 1
-            end
-        end
-        if (total >= (21 - tolerance)) and (total <= (21 + tolerance)) then
-            table.insert(ret, t)
-            return ret
-        end
-        return {}
-    end
-
-    local get_blackjack_three = function(hand)
-        if (#hand < 3) then
-            return {}
-        end
-        local ret = {}
-        local t = {}
-        local total = 0
-        local aces = 0
-        local rank = -1
-        local tolerance = add_bj_count()
-        for i=1, #hand do
-            if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
-                if (rank == -1) then
-                    rank = hand[i].base.value
-                end
-                if (hand[i].base.value ~= rank) then
-                    return {}
-                end
-                total = total + hand[i].base.nominal
-                t[#t+1] = hand[i]
-                if hand[i].base.value == 'Ace' then
-                    aces = aces + 1
-                end
-            end
-        end
-        if (#t ~= 3) then
-            return {}
-        end
-        if (total > (21 + tolerance)) then
-            while ((total > (21 + tolerance)) and (aces > 0)) do 
-                total = total - 10
-                aces = aces - 1
-            end
-        end
-        if (total >= (21 - tolerance)) and (total <= (21 + tolerance)) then
-            table.insert(ret, t)
-            return ret
-        end
-        return {}
-    end
-
-    local get_natural = function(hand) 
-        local ret = {}
-        local t = {}
-        local ace = false
-        local face = false
-        for i=1, #hand do
-            if (hand[i].base.nominal > 0) and (hand[i].ability.effect ~= 'Stone Card') then
-                t[#t+1] = hand[i]
-                if (hand[i].base.value == 'Ace') and (not ace) then
-                    ace = true
-                elseif (hand[i].base.nominal == 10) and (not face) then
-                    face = true
-                else
-                    return {}
-                end
-            end
-        end
-        if ace and face then
-            table.insert(ret, t)
-            return ret
-        end
-        return {}
-    end
-
-    if next(get_blackjack(hand)) and (#results["Flush House"] ~= 0) then
-        results["h_bj_jack_flush_house"] = get_blackjack(hand)
-    else
-        results["h_bj_jack_flush_house"] = {}
-    end
-
-    if next(get_blackjack(hand)) and (#results["Full House"] ~= 0) then
-        results["h_bj_jack_house"] = get_blackjack(hand)
-    else
-        results["h_bj_jack_house"] = {}
-    end
-
-    if next(get_blackjack(hand)) and (#results["Flush"] ~= 0) then
-        results["h_bj_jack_flush"] = get_blackjack(hand)
-    else
-        results["h_bj_jack_flush"] = {}
-    end
-
-    if next(get_blackjack_three(hand)) then
-        results["h_bj_jack_three"] = get_blackjack_three(hand)
-    else
-        results["h_bj_jack_three"] = {}
-    end
-
-    if next(get_natural(hand)) then
-        results["h_bj_natural"] = get_natural(hand)
-    else
-        results["h_bj_natural"] = {}
-    end
-
-    if next(get_blackjack(hand)) and not (#results["h_bj_natural"] ~= 0) then
-        results["h_bj_jack"] = get_blackjack(hand)
-    else
-        results["h_bj_jack"] = {}
-    end
-
-    return results
-end
-evaluate_poker_hand = new_evaluate_poker_hand
 
 old_press = Blind.press_play
 function Blind:press_play()
@@ -400,7 +441,7 @@ SMODS.Joker {
     pos = {x = 0, y = 0},
     cost = 4,
     config = {extra = {xmult = 3}},
-    unlock_condition = {type = 'win_no_hand', extra = 'h_bj_jack'},
+    unlock_condition = {type = 'win_no_hand', extra = 'Blackjack'},
     unlocked = false,
     calculate = function(self, card, context)
         if context.joker_main then
