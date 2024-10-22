@@ -114,7 +114,7 @@ local new_hands = {
 }
 
 new_hands[1].evaluate = function(parts, hand)
-    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) and next(parts._flush) and #hand >= 5 then
+    if next(get_blackjack(hand)) and  (#parts._3 >= 1 and #parts._2 >= 2) and next(parts._flush) and #hand >= 5 then
         return {SMODS.merge_lists(parts._3, parts._2)}
     else
         return {}
@@ -124,7 +124,7 @@ end
 new_hands[2].evaluate = function(parts, hand)
     
     if next(get_blackjack(hand))  then
-        if #parts._3 < 1 or #parts._2 < 2 then return {} end
+        if #parts._3 < 1 or #parts._2 < 3 then return {} end
         --return parts._all_pairs
         
         return {SMODS.merge_lists(parts._3, parts._2)}
