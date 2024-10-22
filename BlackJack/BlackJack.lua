@@ -114,7 +114,7 @@ local new_hands = {
 }
 
 new_hands[1].evaluate = function(parts, hand)
-    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) and next(parts._flush) then
+    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) and next(parts._flush) and #hand >= 5 then
         return {SMODS.merge_lists(parts._3, parts._2)}
     else
         return {}
@@ -122,7 +122,11 @@ new_hands[1].evaluate = function(parts, hand)
 end
 
 new_hands[2].evaluate = function(parts, hand)
-    if next(get_blackjack(hand)) and next(parts._3) and next(parts._2) then
+    
+    if next(get_blackjack(hand))  then
+        if #parts._3 < 1 or #parts._2 < 2 then return {} end
+        --return parts._all_pairs
+        
         return {SMODS.merge_lists(parts._3, parts._2)}
     else
         return {}
@@ -441,7 +445,7 @@ SMODS.Joker {
     pos = {x = 0, y = 0},
     cost = 4,
     config = {extra = {xmult = 3}},
-    unlock_condition = {type = 'win_no_hand', extra = 'Blackjack'},
+    unlock_condition = {type = 'win_no_hand', extra = 'bj_jack'},
     unlocked = false,
     calculate = function(self, card, context)
         if context.joker_main then
